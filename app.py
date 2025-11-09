@@ -20,9 +20,23 @@ metrics_logger.addHandler(metrics_handler)
 metrics_logger.setLevel(logging.INFO)
 
 # Initialize embeddings and LLM
-embeddings_model = OpenAIEmbeddings(model="text-embedding-ada-002")
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+# embeddings_model = OpenAIEmbeddings(model="text-embedding-ada-002")
+# llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
+try:
+    embeddings_model = OpenAIEmbeddings(
+        model="text-embedding-ada-002",
+        openai_api_key=st.secrets["OPENAI_API_KEY"]
+    )
+    llm = ChatOpenAI(
+        model="gpt-4o-mini",
+        temperature=0,
+        openai_api_key=st.secrets["OPENAI_API_KEY"]
+    )
+except KeyError:
+    st.error("OPENAI_API_KEY not found. Please add it in Streamlit Secrets.")
+    st.stop()
+    
 # Load vector store
 PERSISTENT_DIR = "./chroma_db_full"
 try:
